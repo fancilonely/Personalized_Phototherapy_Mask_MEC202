@@ -1,3 +1,8 @@
+本项目为XJTLU的MEC202课程项目Personalized Phototherapy Mask的Python部分代码,该项目是与苏州市中医院合作的工业项目。
+禁止任何XJTLU的其他小组学生剽窃抄袭本项目代码的行为。
+
+以下内容为材料参考，提供给项目参与者。
+
 Python代码的运行步骤大致可以分为以下几个部分：
 
     启动程序
