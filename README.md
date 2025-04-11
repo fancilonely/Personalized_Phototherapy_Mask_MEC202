@@ -6,9 +6,11 @@
 ---
 
 ## 👆 更新描述
-Version 0.4: The RGB light band of WS2812B is controlled by matrix input under HM-10 Bluetooth.
-Version 0.3: The code is updated to realize the control of RGB light band of WS2812B under HM-10 Bluetooth.
-Version 0.2: The code is updated to realize the control of LED on and off under HM-10 Bluetooth
+- Version 0.4: The RGB light band of WS2812B is controlled by matrix input under HM-10 Bluetooth.
+
+- Version 0.3: The code is updated to realize the control of RGB light band of WS2812B under HM-10 Bluetooth.
+
+- Version 0.2: The code is updated to realize the control of LED on and off under HM-10 Bluetooth
 
 ---
 
