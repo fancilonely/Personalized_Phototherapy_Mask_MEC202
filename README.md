@@ -18,7 +18,7 @@
 
 ---
 
-## 💡 Arduino UNO R3 代码 version 0.3/0.4/1.0
+## 💡 Arduino UNO R3 代码 version 0.3/0.4/1.0/1.1
 
 Arduino:
 
