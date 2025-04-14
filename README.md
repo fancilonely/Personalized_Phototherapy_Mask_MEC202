@@ -1,4 +1,4 @@
-# 📘 MEC202《个性化光疗面罩》项目 Version 0.4· Python技术文档
+# 📘 MEC202《个性化光疗面罩》项目 Version 1.0· Python技术文档
 **项目成员专用 | 禁止XJTLU其他小组抄袭**  
 **更新日期：2025.4.10**  
 **课程：MEC202 | 合作方：苏州市中医医院**
@@ -6,6 +6,10 @@
 ---
 
 ## 👆 更新描述
+- version 1.1: New logic: multiple phototherapy and reading csv input files.
+
+- Version 1.0: All logic of python and arduino part is completed to realize simple phototherapy task.
+
 - Version 0.4: The RGB light band of WS2812B is controlled by matrix input under HM-10 Bluetooth.
 
 - Version 0.3: The code is updated to realize the control of RGB light band of WS2812B under HM-10 Bluetooth.
@@ -14,7 +18,7 @@
 
 ---
 
-## 💡 Arduino UNO R3 代码 version 0.3/0.4
+## 💡 Arduino UNO R3 代码 version 0.3/0.4/1.0
 
 Arduino:
 
@@ -201,11 +205,13 @@ HM-10 是一款支持 BLE 4.0 协议的低功耗蓝牙模块，符合 GATT 通�
 
 ---
 ## 本版本更新：
-- 多串口多方向的开发，PINn:R,G,B的引脚：亮度指令的设计。
+- 多串口多方向的开发，PINn:R,G,B的引脚：开关指令的设计。
 - 输入矩阵转化为引脚指令。
+- 开启后自动读取数据，自动关闭。
 
 ## 下版本更新：
 - 自动化处理识别的结果。
+- 时间函数和亮度函数。
 
 **特别提示：**
 - HM-10 BLE 非传统蓝牙，无 COM端口，需用 `bleak` 连接
