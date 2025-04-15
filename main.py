@@ -1,64 +1,82 @@
-#main.py
+# main.py
 import asyncio
-import time
-from data_processing import (
-    generate_commands,
-    generate_shutdown_commands,
-    split_matrix_dynamically
-)
-from bluetooth_communication import send_commands_via_bluetooth
-from data_processing import split_matrix_dynamically, read_matrix_from_csv #csv导入
-# 其他导入不变
+from data_processing import read_matrix_from_csv, generate_commands
+from bluetooth_communication import BluetoothController
+from datetime import datetime
 
-async def control_dynamically(input_matrix, duration_per_round=5):
-    """
-    根据输入矩阵执行动态光疗轮次，每轮执行唯一颜色控制区域
-    """
-    all_rounds = split_matrix_dynamically(input_matrix)
-    print(f"[INFO] 本次共需执行 {len(all_rounds)} 轮光疗")
+def log(msg):
+    print(f"[{datetime.now().strftime('%H:%M:%S')}] {msg}")
 
-    for idx, round_matrix in enumerate(all_rounds):
-        print("=" * 50)
-        print(f"[INFO] ➤ 第 {idx + 1} 轮光疗开始，共 {len(round_matrix)} 个区域")
-        print(f"[INFO] ⏱️ 每轮持续时间：{duration_per_round} 秒")
+class RegionController:
+    def __init__(self, zone_id, rgb_flags, total_duration, ble_controller):
+        self.zone_id = zone_id
+        self.rgb_flags = rgb_flags  # [R, G, B]
+        self.total_duration = total_duration
+        self.ble_controller = ble_controller
+        self.subtasks = self._build_subtasks()
+        self.step_duration = total_duration / len(self.subtasks) if self.subtasks else 0
 
-        # 生成命令并发送
-        commands = generate_commands(round_matrix)
-        await send_commands_via_bluetooth(commands)
+    def _build_subtasks(self):
+        tasks = []
+        if self.rgb_flags[0]:
+            tasks.append([self.zone_id, 1, 0, 0])
+        if self.rgb_flags[1]:
+            tasks.append([self.zone_id, 0, 1, 0])
+        if self.rgb_flags[2]:
+            tasks.append([self.zone_id, 0, 0, 1])
+        return tasks
 
-        # 开始计时
-        start_time = time.time()
-        await asyncio.sleep(duration_per_round)
-        elapsed = time.time() - start_time
+    async def run(self):
+        for matrix in self.subtasks:
+            cmd = generate_commands([matrix])[0]
+            await self.ble_controller.send_command(cmd)
 
-        # 关闭LED
-        shutdown_commands = generate_shutdown_commands(round_matrix)
-        await send_commands_via_bluetooth(shutdown_commands)
+            await asyncio.sleep(2)  # ✅ 给 Arduino 2秒缓冲显示
+            log(f"[ZONE {self.zone_id}] 发光 {matrix[1:]}, 时长 {self.step_duration:.2f}s")
 
-        print(f"[INFO] 第 {idx + 1} 轮光疗结束，用时 {elapsed:.1f} 秒")
-        print("=" * 50)
+            await asyncio.sleep(self.step_duration)
 
-    print("[INFO] ✅ 所有光疗轮次执行完成！")
+
+async def control_all_regions_parallel(matrix, total_duration):
+    ble_controller = BluetoothController()
+    await ble_controller.connect()
+
+    if not ble_controller.client:
+        return
+
+    log(f"[INFO] 开始并行光疗，总时间：{total_duration}秒")
+
+    # 为每个区域生成控制器
+    tasks = []
+    for row in matrix:
+        zone, r, g, b = row
+        controller = RegionController(zone, [r, g, b], total_duration, ble_controller)
+        tasks.append(controller.run())
+
+    await asyncio.gather(*tasks)
+
+    # 所有区域关闭
+    shutdown_matrix = [[row[0], 0, 0, 0] for row in matrix]
+    shutdown_cmds = generate_commands(shutdown_matrix)
+    for cmd in shutdown_cmds:
+        await ble_controller.send_command(cmd)
+        log(f"🛑 关闭命令: {cmd}")
+
+    await asyncio.sleep(1)  # 给Arduino响应时间
+    log("[INFO] ✅ 所有光疗完成并已关闭")
+
+    await ble_controller.disconnect()
 
 def main():
-    # 示例输入矩阵：每行 [区域号, 红光, 绿光, 蓝光]
-
-#    input_matrix = [
-#        [1, 1, 1, 0],  # R+G
-#        [2, 0, 1, 0],  # G
-#        [3, 0, 0, 1],  # B
-#        [4, 1, 0, 0],  # R
-#        [5, 1, 1, 1],  # R+G+B
-#    ]
-    file_path = "input_matrix.csv"  # 👈 放你自己的文件路径
+    file_path = "input_matrix.csv"
     input_matrix = read_matrix_from_csv(file_path)
 
     if not input_matrix:
         print("[ERROR] 输入矩阵为空或CSV文件格式错误")
         return
 
-    duration_per_round = 5
-    asyncio.run(control_dynamically(input_matrix, duration_per_round))
+    total_time = 12  # ⏱️ 总时间
+    asyncio.run(control_all_regions_parallel(input_matrix, total_time))
 
 if __name__ == "__main__":
     main()
