@@ -1,4 +1,4 @@
-# 📘 MEC202《个性化光疗面罩》项目 Version 1.0· Python技术文档
+# 📘 MEC202《个性化光疗面罩》项目 Version 1.1· Python技术文档
 **项目成员专用 | 禁止XJTLU其他小组抄袭**  
 **更新日期：2025.4.10**  
 **课程：MEC202 | 合作方：苏州市中医医院**
@@ -18,7 +18,7 @@
 
 ---
 
-## 💡 Arduino UNO R3 代码 version 0.3/0.4/1.0
+## 💡 Arduino UNO R3 代码 version 0.3/0.4/1.0/1.1
 
 Arduino:
 
