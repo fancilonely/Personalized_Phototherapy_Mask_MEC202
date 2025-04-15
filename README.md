@@ -1,4 +1,4 @@
-# 📘 MEC202《个性化光疗面罩》项目 Version 1.1· Python技术文档
+# 📘 MEC202《个性化光疗面罩》项目 Version 1.2· Python技术文档
 **项目成员专用 | 禁止XJTLU其他小组抄袭**  
 **更新日期：2025.4.10**  
 **课程：MEC202 | 合作方：苏州市中医医院**
@@ -6,7 +6,13 @@
 ---
 
 ## 👆 更新描述
-- version 1.1: New logic: multiple phototherapy and reading csv input files.
+- Version 1.2: 
+Python code:
+A more refined logic is adopted, changing the time input to a uniform total time and proactively allocating time.
+Arduino code:
+The new sine function is used to preserve the photorespiration output.
+
+- Version 1.1: New logic: multiple phototherapy and reading csv input files.
 
 - Version 1.0: All logic of python and arduino part is completed to realize simple phototherapy task.
 
@@ -17,6 +23,112 @@
 - Version 0.2: The code is updated to realize the control of LED on and off under HM-10 Bluetooth
 
 ---
+## 💡 Arduino UNO R3 代码 version 1.2
+
+#include <SoftwareSerial.h>
+#include <Adafruit_NeoPixel.h>
+#include <math.h>
+
+#define LED_COUNT 10
+
+// 初始化 5 个灯带对象
+Adafruit_NeoPixel rgb_display_7(LED_COUNT);
+Adafruit_NeoPixel rgb_display_8(LED_COUNT);
+Adafruit_NeoPixel rgb_display_9(LED_COUNT);
+Adafruit_NeoPixel rgb_display_10(LED_COUNT);
+Adafruit_NeoPixel rgb_display_11(LED_COUNT);
+
+SoftwareSerial BTSerial(2, 3);
+
+// 状态记录：每个灯带当前颜色值
+int rVals[5] = {0, 0, 0, 0, 0};
+int gVals[5] = {0, 0, 0, 0, 0};
+int bVals[5] = {0, 0, 0, 0, 0};
+
+// 用于记录当前亮度帧
+int brightnessPhase = 0;
+
+Adafruit_NeoPixel* getStrip(int pin) {
+  switch (pin) {
+    case 7: return &rgb_display_7;
+    case 8: return &rgb_display_8;
+    case 9: return &rgb_display_9;
+    case 10: return &rgb_display_10;
+    case 11: return &rgb_display_11;
+    default: return nullptr;
+  }
+}
+
+int getIndexFromPin(int pin) {
+  return pin - 7; // 将 PIN7~11 映射为 0~4
+}
+
+void setup() {
+  Serial.begin(9600);
+  BTSerial.begin(9600);
+
+  rgb_display_7.begin();  rgb_display_7.setPin(7);  rgb_display_7.clear();  rgb_display_7.show();
+  rgb_display_8.begin();  rgb_display_8.setPin(8);  rgb_display_8.clear();  rgb_display_8.show();
+  rgb_display_9.begin();  rgb_display_9.setPin(9);  rgb_display_9.clear();  rgb_display_9.show();
+  rgb_display_10.begin(); rgb_display_10.setPin(10);rgb_display_10.clear(); rgb_display_10.show();
+  rgb_display_11.begin(); rgb_display_11.setPin(11);rgb_display_11.clear(); rgb_display_11.show();
+
+  Serial.println("Arduino 启动：每个引脚接收 PINx:R,G,B 并以类正弦方式显示光照");
+}
+
+void loop() {
+  // 蓝牙接收新指令
+  if (BTSerial.available()) {
+    String cmd = BTSerial.readStringUntil('\n');
+    cmd.trim();
+    Serial.println("收到指令：" + cmd);
+
+    if (cmd.startsWith("PIN")) {
+      int colonIndex = cmd.indexOf(':');
+      int pin = cmd.substring(3, colonIndex).toInt();
+
+      String rgbStr = cmd.substring(colonIndex + 1);
+      int c1 = rgbStr.indexOf(',');
+      int c2 = rgbStr.lastIndexOf(',');
+      if (c1 == -1 || c2 == -1 || c1 == c2) return;
+
+      int r = rgbStr.substring(0, c1).toInt();
+      int g = rgbStr.substring(c1 + 1, c2).toInt();
+      int b = rgbStr.substring(c2 + 1).toInt();
+
+      if (pin >= 7 && pin <= 11) {
+        int idx = getIndexFromPin(pin);
+        rVals[idx] = r;
+        gVals[idx] = g;
+        bVals[idx] = b;
+        BTSerial.println("OK: SET PIN" + String(pin));
+      } else {
+        BTSerial.println("ERR: PIN OUT OF RANGE");
+      }
+    }
+  }
+
+  // 对所有灯带执行正弦波显示（每一帧）
+float wave = abs(sin(brightnessPhase * 3.1416 / 255.0));
+float brightness = 100 + wave * 155.0;  // 映射范围从 128 到 255
+
+  for (int i = 0; i < 5; i++) {
+    Adafruit_NeoPixel* strip = getStrip(i + 7);
+    if (!strip) continue;
+
+    int r = rVals[i] * brightness / 255;
+    int g = gVals[i] * brightness / 255;
+    int b = bVals[i] * brightness / 255;
+
+    for (int j = 0; j < LED_COUNT; j++) {
+      strip->setPixelColor(j, r, g, b);
+    }
+    strip->show();
+  }
+
+  brightnessPhase = (brightnessPhase + 4) % 256;
+  delay(15);
+}
 
 ## 💡 Arduino UNO R3 代码 version 0.3/0.4/1.0/1.1
 
