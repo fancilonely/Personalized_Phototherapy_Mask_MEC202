@@ -28,6 +28,9 @@ class RegionController:
 
     async def run(self):
         for matrix in self.subtasks:
+            await self.ble_controller.send_command(f"PIN{self.zone_id + 6}:0,0,0")
+            await asyncio.sleep(0.1)
+
             cmd = generate_commands([matrix])[0]
             await self.ble_controller.send_command(cmd)
 
@@ -75,7 +78,7 @@ def main():
         print("[ERROR] 输入矩阵为空或CSV文件格式错误")
         return
 
-    total_time = 12  # ⏱️ 总时间
+    total_time = 24  # ⏱️ 总时间
     asyncio.run(control_all_regions_parallel(input_matrix, total_time))
 
 if __name__ == "__main__":
