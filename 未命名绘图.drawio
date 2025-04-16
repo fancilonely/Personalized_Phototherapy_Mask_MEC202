@@ -58,8 +58,8 @@
         <mxCell id="wguGmi2jKLhknNLm4Vr_-24" value="Arduino 通过对应引脚控制灯条进行符合规则的发光" style="rounded=1;whiteSpace=wrap;html=1;direction=west;" vertex="1" parent="1">
           <mxGeometry x="620" y="870" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="wguGmi2jKLhknNLm4Vr_-26" value="是否需要循环？" style="rhombus;whiteSpace=wrap;html=1;direction=west;" vertex="1" parent="1">
-          <mxGeometry x="625" y="745.5" width="110" height="79" as="geometry" />
+        <mxCell id="wguGmi2jKLhknNLm4Vr_-26" value="&lt;div&gt;是否需要其他颜色&lt;/div&gt;&lt;div&gt;光疗？是否需要使用&lt;/div&gt;&lt;div&gt;另一套光疗方案？&lt;/div&gt;" style="rhombus;whiteSpace=wrap;html=1;direction=west;" vertex="1" parent="1">
+          <mxGeometry x="604.53" y="732.69" width="150.94" height="104.63" as="geometry" />
         </mxCell>
         <mxCell id="wguGmi2jKLhknNLm4Vr_-28" value=" 4纵行矩阵(区域, 红色, 绿色, 蓝色)" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="410" y="660" width="120" height="60" as="geometry" />
@@ -83,7 +83,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="wguGmi2jKLhknNLm4Vr_-36" value="解码命令，找到引脚与RGB值" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="410" y="940" width="120" height="60" as="geometry" />
+          <mxGeometry x="410" y="930" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="wguGmi2jKLhknNLm4Vr_-38" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="wguGmi2jKLhknNLm4Vr_-23" target="wguGmi2jKLhknNLm4Vr_-36">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
@@ -96,8 +96,8 @@
             <mxPoint x="10" y="1110" as="sourcePoint" />
             <mxPoint x="60" y="1060" as="targetPoint" />
             <Array as="points">
-              <mxPoint x="470" y="1040" />
-              <mxPoint x="680" y="1040" />
+              <mxPoint x="470" y="1010" />
+              <mxPoint x="680" y="1010" />
             </Array>
           </mxGeometry>
         </mxCell>
@@ -146,6 +146,12 @@
         </mxCell>
         <mxCell id="wguGmi2jKLhknNLm4Vr_-46" value="[大于,继续处理]" style="text;strokeColor=none;align=center;fillColor=none;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
           <mxGeometry x="430" y="519" width="90" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="wguGmi2jKLhknNLm4Vr_-47" value="[仍然需要继续光疗]" style="text;strokeColor=none;align=center;fillColor=none;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="540" y="760" width="70" height="10" as="geometry" />
+        </mxCell>
+        <mxCell id="wguGmi2jKLhknNLm4Vr_-48" value="[不需要继续光疗]" style="text;strokeColor=none;align=center;fillColor=none;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="690" y="700" width="60" height="30" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
